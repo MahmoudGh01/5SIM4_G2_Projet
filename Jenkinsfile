@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        SONARQUBE_ENV = 'SonarQube'
-        SONAR_TOKEN = credentials('sonarToken')
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub')
-    }
-
     stages {
         stage('Checkout GIT') {
             steps {
