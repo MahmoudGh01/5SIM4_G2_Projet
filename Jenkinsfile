@@ -10,6 +10,20 @@ pipeline {
             steps {
                 sh 'mvn clean compile'  
             }
+            
+        }
+         stage('SONARQUBE') {
+            steps {
+                script {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        sh """
+                            mvn sonar:sonar \
+                            -Dsonar.login=admin\
+                            -Dsonar.password=Sonar12345678@\
+                        """
+                    }
+                }
+            }
         }
     }
     post {
