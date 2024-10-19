@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     // Clean and install dependencies
-                    sh 'mvn clean install -DskipTests'
+                    sh 'mvn clean install'
 
                     // Uncomment these lines if you want to run tests and package the application
                     // sh 'mvn test'
@@ -35,7 +35,7 @@ pipeline {
                         sh """
                             mvn sonar:sonar \
                             -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+                            -Dsonar.coverage.jacoco.xmlReportPaths=/Projet_Devops/target/site/jacoco/jacoco.xml
                         """
                     }
                 }
