@@ -7,6 +7,7 @@ pipeline {
     }
 
     stages {
+
         stage('GIT') {
             steps {
                 echo 'Pulling from Git...'
@@ -38,6 +39,36 @@ pipeline {
                             -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
                         """
                     }
+                }
+            }
+        }
+
+        stage('NEXUS') {
+            agent { label 'agent01' }
+            steps {
+                script {
+                    echo "Deploying to Nexus..."
+
+                    nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: "192.168.50.5:8081", // Updated Nexus URL based on previous info
+                        groupId: 'tn.esprit.spring',
+                        artifactId: 'gestion-station-ski',
+                        version: '1.0',
+                        repository: "maven-releases", // Based on previous Nexus repo
+                        credentialsId: "NEXUS", // Using your stored Nexus credentials
+                        artifacts: [
+                            [
+                                artifactId: 'gestion-station-ski',
+                                classifier: '',
+                                file: '/home/vagrant/workspace/Projet_Devops/target/gestion-station-ski-1.0.jar', // Relative path from workspace
+                                type: 'jar'
+                            ]
+                        ]
+                    )
+
+                    echo "Deployment to Nexus completed!"
                 }
             }
         }
