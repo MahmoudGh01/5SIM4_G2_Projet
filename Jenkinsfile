@@ -54,7 +54,7 @@ pipeline {
                             [
                                 artifactId: 'gestion-station-ski',
                                 classifier: '',
-                                file: '/var/lib/jenkins/workspace/Pipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
+                                file: 'target/gestion-station-ski-1.0.jar', // Relative path from workspace
                                 type: 'jar'
                             ]
                         ]
