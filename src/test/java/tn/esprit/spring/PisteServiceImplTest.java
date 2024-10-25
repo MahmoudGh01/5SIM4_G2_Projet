@@ -12,7 +12,6 @@ import tn.esprit.spring.entities.Piste;
 import tn.esprit.spring.repositories.IPisteRepository;
 import tn.esprit.spring.services.PisteServicesImpl;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,7 +78,7 @@ class PisteServiceImplTest {  // Updated class name to match the file name
         assertEquals("Advanced Slope", result.getNamePiste());
         assertEquals(Color.BLACK, result.getColor());
     }
-    
+
     @Test
     void testRemovePiste() {
         Long pisteId = 1L;
