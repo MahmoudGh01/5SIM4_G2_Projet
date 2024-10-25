@@ -44,7 +44,6 @@ pipeline {
         }
 
         stage('NEXUS') {
-            agent { label 'agent01' }
             steps {
                 script {
                     echo "Deploying to Nexus..."
