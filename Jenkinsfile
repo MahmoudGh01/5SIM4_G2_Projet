@@ -61,7 +61,7 @@ pipeline {
                             [
                                 artifactId: 'gestion-station-ski',
                                 classifier: '',
-                                file: '/target/gestion-station-ski-1.0.jar', // Relative path from workspace
+                                file: '/home/vagrant/workspace/Pipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
                                 type: 'jar'
                             ]
                         ]
