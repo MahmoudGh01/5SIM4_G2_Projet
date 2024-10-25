@@ -100,6 +100,7 @@ class PisteServiceImplTest {  // Updated class name to match the file name
         });
     }
 
+
     @Test
     void testRemovePiste() {
         Long pisteId = 1L;
