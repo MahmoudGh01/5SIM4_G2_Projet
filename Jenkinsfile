@@ -12,9 +12,9 @@ pipeline {
         }
         stage("Build") {
             steps {
-                sh 'mvn clean compile'  
+                sh 'mvn clean package'
+                sh 'ls -la target/' // Check the target directory for JAR
             }
-            
         }
         stage('SONARQUBE') {
             steps {
@@ -30,34 +30,31 @@ pipeline {
             }
         }
         stage('NEXUS') {
-                    steps {
-                        script {
-                            echo "Deploying to Nexus..."
-
-                            nexusArtifactUploader(
-                                nexusVersion: 'nexus3',
-                                protocol: 'http',
-                                nexusUrl: "192.168.50.4:8081", // Updated Nexus URL based on previous info
-                                groupId: 'tn.esprit.spring',
+            steps {
+                script {
+                    echo "Deploying to Nexus..."
+                    nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: '192.168.50.4:8081',
+                        groupId: 'tn.esprit.spring',
+                        artifactId: 'gestion-station-ski',
+                        version: '1.0',
+                        repository: 'maven-releases',
+                        credentialsId: 'NEXUS',
+                        artifacts: [
+                            [
                                 artifactId: 'gestion-station-ski',
-                                version: '1.0',
-                                repository: "maven-releases", // Based on previous Nexus repo
-                                credentialsId: "NEXUS", // Using your stored Nexus credentials
-                                artifacts: [
-                                    [
-                                        artifactId: 'gestion-station-ski',
-                                        classifier: '',
-                                        file: '/var/lib/jenkins/workspace/AminePipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
-                                        type: 'jar'
-                                    ]
-                                ]
-                            )
-
-                            echo "Deployment to Nexus completed!"
-                        }
-                    }
+                                classifier: '',
+                                file: 'target/gestion-station-ski-1.0.jar', // Relative path
+                                type: 'jar'
+                            ]
+                        ]
+                    )
+                    echo "Deployment to Nexus completed!"
                 }
-
+            }
+        }
     }
     post {
         always {
