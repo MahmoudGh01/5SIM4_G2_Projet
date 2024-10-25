@@ -59,7 +59,7 @@ pipeline {
                         credentialsId: "NEXUS", // Using your stored Nexus credentials
                         artifacts: [
                             [
-                                artifactId: 'gestion-station-ski',
+                                //artifactId: 'gestion-station-ski',
                                 classifier: '',
                                 file: '/home/vagrant/workspace/Pipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
                                 type: 'jar'
