@@ -1,47 +1,47 @@
 pipeline {
     agent any
+
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonartDevops')
     }
+
     stages {
-        stage("Clone Repository") {
+
+        stage('GIT') {
             steps {
-                git url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git', branch: 'MahmoudGharbi-5sin4-G2'
+                echo 'Pulling from Git...'
+                git branch: 'MahmoudGharbi-5sin4-G2',
+                    url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git'
             }
         }
-        stage("Build") {
+
+        stage('COMPILING') {
             steps {
-                 script {
-                                   // Clean and install dependencies
-                                   sh 'mvn clean install'
+                script {
+                    // Clean and install dependencies
+                    sh 'mvn clean install'
 
-                                   // Uncomment these lines if you want to run tests and package the application
-                                   // sh 'mvn test'
-                                    sh 'mvn package'
-                               }
-            }
-
-        }
-              stage('SONARQUBE') {
-                  steps {
-                      script {
-                          withSonarQubeEnv("${SONARQUBE_ENV}") {
-                              sh """
-                                  mvn sonar:sonar \
-                                  -Dsonar.login=${SONAR_TOKEN} \
-                                  -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
-                              """
-                          }
-                      }
-                  }
-              }
-        stage("Test") {
-                    steps {
-                        sh 'mvn test'
-                    }
-
+                    // Uncomment these lines if you want to run tests and package the application
+                    // sh 'mvn test'
+                    // sh 'mvn package'
                 }
+            }
+        }
+
+        stage('SONARQUBE') {
+            steps {
+                script {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        sh """
+                            mvn sonar:sonar \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
+                        """
+                    }
+                }
+            }
+        }
 
         stage('NEXUS') {
             steps {
@@ -61,7 +61,7 @@ pipeline {
                             [
                                 artifactId: 'gestion-station-ski',
                                 classifier: '',
-                                file: '/var/lib/jenkins/workspace/Pipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
+                                file: '/target/gestion-station-ski-1.0.jar', // Relative path from workspace
                                 type: 'jar'
                             ]
                         ]
@@ -70,17 +70,12 @@ pipeline {
                     echo "Deployment to Nexus completed!"
                 }
             }
+        }
     }
-    }
+
     post {
         always {
-            echo "========always========"
-        }
-        success {
-            echo "========pipeline executed successfully ========"
-        }
-        failure {
-            echo "========pipeline execution failed========"
+            echo 'Pipeline execution completed!'
         }
     }
 }
