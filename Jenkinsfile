@@ -19,6 +19,7 @@ pipeline {
                             mvn sonar:sonar \
                             -Dsonar.login=admin\
                             -Dsonar.password=Mahmoud2001#\
+                            -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
                         """
 
 
