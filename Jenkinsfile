@@ -61,7 +61,7 @@ pipeline {
                             [
                                 artifactId: 'gestion-station-ski',
                                 classifier: '',
-                                file: '/home/vagrant/workspace/Achref pipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
+                                file: '/var/lib/jenkins/workspace/Achref pipeline/target/gestion-station-ski-1.0.jar', // Relative path from workspace
                                 type: 'jar'
                             ]
                         ]
