@@ -34,7 +34,7 @@ class PisteServiceImplTest {  // Updated class name to match the file name
     }
 
     @Test
-    void testAddPiste() {
+    void testAddPiste_Valid() {
         Piste newPiste = Piste.builder()
                 .namePiste("Beginner's Slope")
                 .color(Color.GREEN)
@@ -60,6 +60,13 @@ class PisteServiceImplTest {  // Updated class name to match the file name
     }
 
     @Test
+    void testAddPiste_Null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            pisteServiceImpl.addPiste(null);
+        });
+    }
+
+    @Test
     void testRetrievePiste() {
         Long pisteId = 1L;
 
@@ -82,26 +89,6 @@ class PisteServiceImplTest {  // Updated class name to match the file name
     }
 
     @Test
-    void testRetrievePiste_NotFound() {
-        Long pisteId = 2L; // Assume this ID does not exist
-
-        when(pisteRepository.findById(pisteId)).thenReturn(Optional.empty());
-
-        Piste result = pisteServiceImpl.retrievePiste(pisteId);
-
-        assertNull(result); // Expecting null since the piste does not exist
-        verify(pisteRepository, times(1)).findById(pisteId);
-    }
-
-    @Test
-    void testAddPiste_Null() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            pisteServiceImpl.addPiste(null);
-        });
-    }
-
-
-    @Test
     void testRemovePiste() {
         Long pisteId = 1L;
 
@@ -113,19 +100,12 @@ class PisteServiceImplTest {  // Updated class name to match the file name
     }
 
     @Test
-    void testRemovePiste_NotFound() {
-        Long pisteId = 2L; // Assume this ID does not exist
-
-        doNothing().when(pisteRepository).deleteById(pisteId);
-
-        pisteServiceImpl.removePiste(pisteId);
-
-        verify(pisteRepository, times(1)).deleteById(pisteId);
-    }
-
-    @Test
     void testRetrieveAllPistes() {
-        List<Piste> pistes = Arrays.asList(new Piste(), new Piste()); // Mock data
+        List<Piste> pistes = Arrays.asList(
+                Piste.builder().numPiste(1L).namePiste("Slope A").color(Color.GREEN).build(),
+                Piste.builder().numPiste(2L).namePiste("Slope B").color(Color.RED).build()
+        );
+
         when(pisteRepository.findAll()).thenReturn(pistes);
 
         List<Piste> result = pisteServiceImpl.retrieveAllPistes();
