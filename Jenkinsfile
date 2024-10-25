@@ -12,7 +12,14 @@ pipeline {
         }
         stage("Build") {
             steps {
-                sh 'mvn clean compile'
+                 script {
+                                   // Clean and install dependencies
+                                   sh 'mvn clean install'
+
+                                   // Uncomment these lines if you want to run tests and package the application
+                                   // sh 'mvn test'
+                                   // sh 'mvn package'
+                               }
             }
 
         }
