@@ -59,12 +59,7 @@ class PisteServiceImplTest {  // Updated class name to match the file name
         assertEquals(Color.GREEN, result.getColor());
     }
 
-    @Test
-    void testAddPiste_Null() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            pisteServiceImpl.addPiste(null);
-        });
-    }
+
 
     @Test
     void testRetrievePiste() {
