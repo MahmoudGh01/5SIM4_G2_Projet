@@ -1,26 +1,54 @@
 pipeline {
     agent any
-    stages {
-        stage("Clone Repository") {
-            steps {
-                git url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git', branch: 'AchrefChaabani-5SIM4-G2'
-            }
-        }
-        stage("Build") {
-            steps {
-                sh 'mvn clean compile'  
-            }
-        }
+
+    environment {
+        SONARQUBE_ENV = 'SonarQube'
+        SONAR_TOKEN = credentials('SonarToken')
     }
+
+    stages {
+
+        stage('GIT') {
+            steps {
+                echo 'Pulling from Git...'
+                git branch: 'AchrefChaabani-5SIM4-G2',
+                    url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git'
+            }
+        }
+
+        stage('COMPILING') {
+            steps {
+                script {
+                    // Clean and install dependencies
+                    sh 'mvn clean install'
+
+                    // Uncomment these lines if you want to run tests and package the application
+                    // sh 'mvn test'
+                    // sh 'mvn package'
+                }
+            }
+        }
+
+        stage('SONARQUBE') {
+            steps {
+                script {
+                    withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        sh """
+                            mvn sonar:sonar \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
+                        """
+                    }
+                }
+            }
+        }
+
+
+    }
+
     post {
         always {
-            echo "========always========"
-        }
-        success {
-            echo "========pipeline executed successfully ========"
-        }
-        failure {
-            echo "========pipeline execution failed========"
+            echo 'Pipeline execution completed!'
         }
     }
 }
