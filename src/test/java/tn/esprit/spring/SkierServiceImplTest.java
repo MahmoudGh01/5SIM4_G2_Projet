@@ -9,6 +9,7 @@ import tn.esprit.spring.entities.*;
 import tn.esprit.spring.repositories.*;
 import tn.esprit.spring.services.SkierServicesImpl;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -50,13 +51,16 @@ class SkierServiceImplTest {
         Skier skier = new Skier();
         Subscription subscription = new Subscription();
         subscription.setTypeSub(TypeSubscription.ANNUAL);  // Définir le type d'abonnement
+        subscription.setStartDate(LocalDate.now());  // Définir une date de début valide
         skier.setSubscription(subscription);
+
         when(skierRepository.save(skier)).thenReturn(skier);
 
         Skier savedSkier = skierService.addSkier(skier);
         assertNotNull(savedSkier);
         verify(skierRepository, times(1)).save(skier);
     }
+
 
     @Test
     void testAddSkierAndAssignToCourse() {
@@ -85,7 +89,7 @@ class SkierServiceImplTest {
         verify(skierRepository, times(1)).save(skier);
     }
 
-   
+
 
     @Test
     void testRemoveSkier() {
