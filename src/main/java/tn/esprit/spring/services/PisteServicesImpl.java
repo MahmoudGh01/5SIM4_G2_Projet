@@ -17,12 +17,8 @@ public class PisteServicesImpl implements  IPisteServices{
         return pisteRepository.findAll();
     }
 
-
     @Override
     public Piste addPiste(Piste piste) {
-        if (piste == null) {
-            throw new IllegalArgumentException("Piste cannot be null");
-        }
         return pisteRepository.save(piste);
     }
 
