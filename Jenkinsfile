@@ -35,6 +35,12 @@ pipeline {
                     }
 
                 }
+         stage("Deploy") {
+                    steps {
+                        sh 'mvn deploy'
+                    }
+
+                }
     }
     post {
         always {
