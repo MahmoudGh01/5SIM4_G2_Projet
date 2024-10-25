@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage("Clone Repository") {
             steps {
-                git url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git', branch: 'MahmoudGharbi-5Sin4-G2'
+                git url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git', branch: 'MahmoudGharbi-5sin4-G2'
             }
         }
         stage("Build") {
