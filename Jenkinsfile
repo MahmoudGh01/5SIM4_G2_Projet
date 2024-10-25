@@ -18,7 +18,7 @@ pipeline {
 
                                    // Uncomment these lines if you want to run tests and package the application
                                    // sh 'mvn test'
-                                   // sh 'mvn package'
+                                    sh 'mvn package'
                                }
             }
 
