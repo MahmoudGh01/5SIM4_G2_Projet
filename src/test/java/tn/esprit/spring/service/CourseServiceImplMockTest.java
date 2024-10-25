@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-public class CourseServiceImplMockTest {
+ class CourseServiceImplMockTest {
 
     @Mock
     ICourseRepository courseRepository;
@@ -37,7 +37,7 @@ public class CourseServiceImplMockTest {
     };
 
     @Test
-    public void testRetrieveCourse() {
+     void testRetrieveCourse() {
         // Mocking the repository to return the sample course when findById is called
         Mockito.when(courseRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(course));
 
