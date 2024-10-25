@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        SONARQUBE_ENV = 'SonarQube'
+        SONAR_TOKEN = credentials('SonartDevops')
+    }
     stages {
         stage("Clone Repository") {
             steps {
@@ -12,19 +16,19 @@ pipeline {
             }
 
         }
-         stage('SONARQUBE') {
-            steps {
-
-                        sh """
-                            mvn sonar:sonar \
-                            -Dsonar.login=admin\
-                            -Dsonar.password=Mahmoud2001#\
-                            -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
-                        """
-
-
-            }
-        }
+              stage('SONARQUBE') {
+                  steps {
+                      script {
+                          withSonarQubeEnv("${SONARQUBE_ENV}") {
+                              sh """
+                                  mvn sonar:sonar \
+                                  -Dsonar.login=${SONAR_TOKEN} \
+                                  -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
+                              """
+                          }
+                      }
+                  }
+              }
         stage("Test") {
                     steps {
                         sh 'mvn test'
