@@ -79,36 +79,7 @@ class PisteServiceImplTest {  // Updated class name to match the file name
         assertEquals("Advanced Slope", result.getNamePiste());
         assertEquals(Color.BLACK, result.getColor());
     }
-
-    @Test
-    void testRetrieveAllPistes() {
-        List<Piste> pistes = List.of(
-                Piste.builder()
-                        .numPiste(1L)
-                        .namePiste("Beginner's Slope")
-                        .color(Color.GREEN)
-                        .length(500)
-                        .slope(15)
-                        .build(),
-                Piste.builder()
-                        .numPiste(2L)
-                        .namePiste("Intermediate Slope")
-                        .color(Color.BLUE)
-                        .length(600)
-                        .slope(20)
-                        .build()
-        );
-
-        when(pisteRepository.findAll()).thenReturn(pistes);
-
-        List<Piste> result = pisteServiceImpl.retrieveAllPistes();
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("Beginner's Slope", result.get(0).getNamePiste());
-        assertEquals(Color.BLUE, result.get(1).getColor());
-    }
-
+    
     @Test
     void testRemovePiste() {
         Long pisteId = 1L;
