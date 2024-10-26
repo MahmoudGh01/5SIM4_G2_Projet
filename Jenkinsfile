@@ -3,9 +3,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
-        IMAGE_NAME = 'mohamedaminelarbi/timesheet-devops'
-        IMAGE_TAG = '1.0.0'
-
+        
     }
     stages {
         stage("Clone Repository") {
@@ -58,18 +56,6 @@ pipeline {
                 }
             }
         }*/
-        stage('Build Docker Image') {
-            steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-            }
-        }
-        stage('Run Docker Image') {
-            steps {
-                script {
-                    sh "docker run -d --name app-timesheet -p 8082:8082 ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
-            }
-        }
     }
     post {
         always {
