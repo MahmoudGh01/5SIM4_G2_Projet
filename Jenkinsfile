@@ -42,7 +42,14 @@ pipeline {
                 }
             }
         }
-
+         stage('Building image') {
+                    steps {
+                        script {
+                            echo 'Building Docker image...'
+                            sh 'docker build -t chaabaniachref/timesheet-devops:1.0.0 .'
+                        }
+                    }
+         }
         stage('NEXUS') {
             steps {
                 script {
