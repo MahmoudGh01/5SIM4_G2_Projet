@@ -4,6 +4,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
+        DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
     }
 
     stages {
@@ -69,6 +70,37 @@ pipeline {
                     )
 
                     echo "Deployment to Nexus completed!"
+                }
+            }
+        }
+
+        stage('Docker Image') {
+            steps {
+                script {
+                    echo 'Building Docker image...'
+                    sh 'docker build -t rab3oon/gestion-station-ski-1.0 .'
+                }
+            }
+        }
+
+        stage('DockerHub') {
+            steps {
+                script {
+                    echo 'Logging into Docker Hub...'
+                    sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
+
+                    echo 'Pushing Docker image to Docker Hub...'
+                    sh 'docker push rab3oon/gestion-station-ski-1.0'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'Deploying application with Docker Compose...'
+                    sh 'docker-compose down || true'
+                    sh 'docker-compose up -d'
                 }
             }
         }
