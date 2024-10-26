@@ -30,7 +30,7 @@ pipeline {
                 }
             }
         }
-       /* stage('NEXUS') {
+        stage('NEXUS') {
             steps {
                 script {
                     echo "Deploying to Nexus..."
@@ -55,7 +55,7 @@ pipeline {
                     echo "Deployment to Nexus completed!"
                 }
             }
-        }*/
+        }
     }
     post {
         always {
