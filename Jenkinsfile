@@ -69,7 +69,7 @@ pipeline {
             }
         }
 
-        stage('Docker Hub') {
+        stage('Docker Build and Push') {
             steps {
                 script {
                     // Build Docker image
@@ -86,6 +86,15 @@ pipeline {
                     sh 'docker push mahmoudgh01/gestion-station-ski:1.0'
 
                     echo 'Docker image successfully pushed to Docker Hub!'
+                }
+            }
+        }
+
+        stage('Docker Compose Up') {
+            steps {
+                script {
+                    echo 'Starting services with Docker Compose...'
+                    sh 'docker-compose up -d'
                 }
             }
         }
