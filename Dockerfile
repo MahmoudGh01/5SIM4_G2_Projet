@@ -1,5 +1,5 @@
 # Utilisez l'image OpenJDK 17 depuis DockerHub
-FROM openjdk:17-alpine
+FROM openjdk:17-slim
 
 # Exposez le port sur lequel votre application Spring Boot sera accessible
 EXPOSE 8089
