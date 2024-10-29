@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonartDevops')
-            DOCKER_CREDENTIALS_ID = 'DOCKER'
+        DOCKER_CREDENTIALS_ID = 'DOCKER'
 
     }
 
