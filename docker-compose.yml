@@ -4,6 +4,7 @@ services:
   # Service pour la base de données MySQL
   db:
     image: mysql:8.0
+    restart: unless-stopped
     container_name: mysql_station_ski
     environment:
       MYSQL_DATABASE: stationSki
@@ -36,6 +37,7 @@ services:
             }'
     stdin_open: true
     tty: true
+    restart: on-failure
     ports:
       - "8089:8089"
     networks:
