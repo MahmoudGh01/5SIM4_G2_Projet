@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   # Service pour la base de données MySQL
   db:
@@ -12,13 +14,18 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - backend-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
 
   # Service pour l'application Spring Boot
   app:
     image: mahmoudgh01/gestion-station-ski:1.0
     container_name: spring_station_ski
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_JSON: '{
               "spring.datasource.url"  : "jdbc:mysql://db:3306/stationSki?createDatabaseIfNotExist=true",
@@ -27,10 +34,21 @@ services:
               "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL5InnoDBDialect",
               "spring.jpa.hibernate.ddl-auto" : "update"
             }'
-      stdin_open: true
-      tty: true
+    stdin_open: true
+    tty: true
     ports:
       - "8089:8089"
+    networks:
+      - backend-network
+
+  # Service pour Prometheus
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
     networks:
       - backend-network
 
