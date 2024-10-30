@@ -5,13 +5,15 @@ pipeline {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
         DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
+        NEXUS_CREDENTIALS = credentials('NEXUS')
+        NEXUS_URL = credentials('NEXUS_URL')
     }
 
     stages {
 
         stage('GIT') {
             steps {
-                echo 'Pulling from Git...'
+                echo 'Pulling from Git repository...'
                 git branch: 'AnasRebai_G2_StationSKI',
                     url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git'
             }
@@ -20,12 +22,9 @@ pipeline {
         stage('COMPILING') {
             steps {
                 script {
+                    echo 'Compiling the project...'
                     // Clean and install dependencies
                     sh 'mvn clean install'
-
-                    // Uncomment these lines if you want to run tests and package the application
-                    // sh 'mvn test'
-                    // sh 'mvn package'
                 }
             }
         }
@@ -33,6 +32,7 @@ pipeline {
         stage('SONARQUBE') {
             steps {
                 script {
+                    echo 'Running SonarQube analysis...'
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
                         sh """
                             mvn sonar:sonar \
@@ -48,22 +48,22 @@ pipeline {
             agent { label 'agent01' }
             steps {
                 script {
-                    echo "Deploying to Nexus..."
+                    echo "Deploying artifact to Nexus..."
 
                     nexusArtifactUploader(
                         nexusVersion: 'nexus3',
                         protocol: 'http',
-                        nexusUrl: "192.168.50.5:8081", // Updated Nexus URL based on previous info
+                        nexusUrl: "192.168.50.5:8081",
                         groupId: 'tn.esprit.spring',
                         artifactId: 'gestion-station-ski',
                         version: '1.0',
-                        repository: "maven-releases", // Based on previous Nexus repo
-                        credentialsId: "NEXUS", // Using your stored Nexus credentials
+                        repository: "maven-releases",
+                        credentialsId: "NEXUS_CREDENTIALS",
                         artifacts: [
                             [
                                 artifactId: 'gestion-station-ski',
                                 classifier: '',
-                                file: '/home/vagrant/workspace/Projet_Devops/target/gestion-station-ski-1.0.jar', // Relative path from workspace
+                                file: "${WORKSPACE}/target/gestion-station-ski-1.0.jar",
                                 type: 'jar'
                             ]
                         ]
@@ -77,8 +77,15 @@ pipeline {
         stage('Docker Image') {
             steps {
                 script {
-                    echo 'Building Docker image...'
-                    sh 'docker build -t rab3oon/gestion-station-ski-1.0 .'
+                    echo 'Building Docker image with Nexus credentials...'
+                    sh """
+                        docker build \
+                            --build-arg NEXUS_USER=${NEXUS_CREDENTIALS_USR} \
+                            --build-arg NEXUS_PASS=${NEXUS_CREDENTIALS_PSW} \
+                            --build-arg NEXUS_URL=${NEXUS_URL} \
+                            -t gestion-station-ski:1.0 .
+                    """
+                    echo "Building Docker image completed!"
                 }
             }
         }
@@ -91,16 +98,6 @@ pipeline {
 
                     echo 'Pushing Docker image to Docker Hub...'
                     sh 'docker push rab3oon/gestion-station-ski-1.0'
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    echo 'Deploying application with Docker Compose...'
-                    sh 'docker-compose down || true'
-                    sh 'docker-compose up -d'
                 }
             }
         }
