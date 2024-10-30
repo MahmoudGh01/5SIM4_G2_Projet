@@ -58,7 +58,7 @@ pipeline {
                         artifactId: 'gestion-station-ski',
                         version: '1.0',
                         repository: "maven-releases",
-                        credentialsId: "NEXUS_CREDENTIALS",
+                        credentialsId: "NEXUS",
                         artifacts: [
                             [
                                 artifactId: 'gestion-station-ski',
