@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
-        NEXUS_URL = credentials('NEXUS_URL')
+        NEXUS_URL = 'http://192.168.50.5:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar'
     }
 
     stages {
@@ -63,8 +63,7 @@ pipeline {
                 script {
                     echo 'Building Docker image with Nexus credentials...'
                     withCredentials([
-                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS'),
-                        string(credentialsId: 'NEXUS_URL', variable: 'NEXUS_URL')
+                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
                     ]) {
                         sh """
                             docker build \
