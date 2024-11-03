@@ -102,9 +102,12 @@ pipeline {
                 script {
                     echo 'Running Trivy security scan...'
                     sh '''
-                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity CRITICAL,HIGH rab3oon/gestion-station-ski:1.0 > trivy_report.txt
+                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --scanners vuln --severity CRITICAL,HIGH rab3oon/gestion-station-ski:1.0 > trivy_report.txt
                     '''
                     echo "Security scan completed. Report saved to trivy_report.txt"
+
+                    // Affiche le rapport de sécurité
+                    sh 'cat trivy_report.txt'
                 }
             }
         }
