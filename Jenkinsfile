@@ -59,6 +59,7 @@ pipeline {
         }
 
         stage('Docker Image') {
+            agent { label 'agent01' }
             steps {
                 script {
                     echo 'Building Docker image with Nexus credentials...'
