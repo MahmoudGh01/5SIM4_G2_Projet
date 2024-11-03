@@ -58,12 +58,14 @@ pipeline {
             }
         }
 
-        stage('Docker Image') {
-            agent { label 'agent01' }
+        stage('Build Docker Image') {
             steps {
                 script {
                     echo 'Building Docker image with Nexus credentials...'
-                    withCredentials([usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS'),
+                        string(credentialsId: 'NEXUS_URL', variable: 'NEXUS_URL')
+                    ]) {
                         sh """
                             docker build \
                                 --build-arg NEXUS_USER=$NEXUS_USER \
@@ -72,7 +74,7 @@ pipeline {
                                 -t gestion-station-ski:1.0 .
                         """
                     }
-                    echo "Docker image build completed!"
+                    echo "Building Docker image completed!"
                 }
             }
         }
