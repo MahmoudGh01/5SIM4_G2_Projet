@@ -4,9 +4,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
-        DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
-        NEXUS_CREDENTIALS = credentials('NEXUS')
-        NEXUS_URL = credentials('NEXUS_URL')
+
     }
 
     stages {
@@ -59,36 +57,6 @@ pipeline {
                     }
 
                     echo "Deployment to Nexus completed!"
-                }
-            }
-        }
-
-        stage('Docker Image') {
-            agent { label 'agent01' }
-            steps {
-                script {
-                    echo 'Building Docker image with Nexus credentials...'
-                    sh """
-                        docker build \
-                            --build-arg NEXUS_USER=${NEXUS_CREDENTIALS_USR} \
-                            --build-arg NEXUS_PASS=${NEXUS_CREDENTIALS_PSW} \
-                            --build-arg NEXUS_URL=${NEXUS_URL} \
-                            -t gestion-station-ski:1.0 .
-                    """
-                    echo "Building Docker image completed!"
-                }
-            }
-        }
-
-        stage('DockerHub') {
-            agent { label 'agent01' }
-            steps {
-                script {
-                    echo 'Logging into Docker Hub...'
-                    sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
-
-                    echo 'Pushing Docker image to Docker Hub...'
-                    sh 'docker push rab3oon/gestion-station-ski-1.0'
                 }
             }
         }
