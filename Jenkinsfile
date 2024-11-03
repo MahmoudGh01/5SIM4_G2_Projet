@@ -84,24 +84,17 @@ pipeline {
             agent { label 'agent01' }
             steps {
                 script {
-                    def imageExists = sh(
-                        script: "docker images -q gestion-station-ski:1.0",
-                        returnStatus: true
-                    ) == 0
-                    if (imageExists) {
-                        echo 'Logging into Docker Hub...'
-                        sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
-                        echo 'Tagging Docker image...'
-                        sh 'docker tag gestion-station-ski:1.0 rab3oon/gestion-station-ski:1.0'
-                        echo 'Pushing Docker image to Docker Hub...'
-                        sh 'docker push rab3oon/gestion-station-ski:1.0'
-                    } else {
-                        error "Docker image gestion-station-ski:1.0 does not exist. Skipping push."
-                    }
+                    echo 'Logging into Docker Hub...'
+                    sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
+
+                    echo 'Tagging Docker image...'
+                    sh 'docker tag gestion-station-ski:1.0 rab3oon/gestion-station-ski:1.0'
+
+                    echo 'Pushing Docker image to Docker Hub...'
+                    sh 'docker push rab3oon/gestion-station-ski:1.0'
                 }
             }
         }
-
 
         stage('Security Scan with Trivy') {
             agent { label 'agent01' }
