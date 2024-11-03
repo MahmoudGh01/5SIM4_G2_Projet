@@ -11,7 +11,8 @@ pipeline {
 
     stages {
 
-        stage('GIT') {
+        stage('Check GIT') {
+            agent { label 'master' }
             steps {
                 echo 'Pulling from Git repository...'
                 git branch: 'AnasRebai_G2_StationSKI',
@@ -19,7 +20,8 @@ pipeline {
             }
         }
 
-        stage('COMPILING') {
+        stage('Clean Build && Unit Tests') {
+            agent { label 'master' }
             steps {
                 script {
                     echo 'Compiling the project...'
@@ -29,7 +31,8 @@ pipeline {
             }
         }
 
-        stage('SONARQUBE') {
+        stage('SONARQUBE Analysis') {
+            agent { label 'master' }
             steps {
                 script {
                     echo 'Running SonarQube analysis...'
@@ -44,7 +47,7 @@ pipeline {
             }
         }
 
-        stage('NEXUS') {
+        stage('Deploy to NEXUS') {
             agent { label 'agent01' }
             steps {
                 script {
@@ -75,6 +78,7 @@ pipeline {
         }
 
         stage('Docker Image') {
+            agent { label 'agent01' }
             steps {
                 script {
                     echo 'Building Docker image with Nexus credentials...'
@@ -91,6 +95,7 @@ pipeline {
         }
 
         stage('DockerHub') {
+            agent { label 'agent01' }
             steps {
                 script {
                     echo 'Logging into Docker Hub...'
