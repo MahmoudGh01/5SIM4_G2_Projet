@@ -4,7 +4,6 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
-        NEXUS_CREDENTIALS = credentials('NEXUS')
         NEXUS_URL = credentials('NEXUS_URL')
     }
 
@@ -63,17 +62,20 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image with Nexus credentials...'
-                    sh """
-                        docker build \
-                            --build-arg NEXUS_USER=${NEXUS_CREDENTIALS_USR} \
-                            --build-arg NEXUS_PASS=${NEXUS_CREDENTIALS_PSW} \
-                            --build-arg NEXUS_URL=${NEXUS_URL} \
-                            -t gestion-station-ski:1.0 .
-                    """
-                    echo "Building Docker image completed!"
+                    withCredentials([usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                        sh """
+                            docker build \
+                                --build-arg NEXUS_USER=$NEXUS_USER \
+                                --build-arg NEXUS_PASS=$NEXUS_PASS \
+                                --build-arg NEXUS_URL=$NEXUS_URL \
+                                -t gestion-station-ski:1.0 .
+                        """
+                    }
+                    echo "Docker image build completed!"
                 }
             }
         }
+
     }
 
     post {
