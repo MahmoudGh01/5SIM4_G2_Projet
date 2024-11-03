@@ -24,8 +24,8 @@ pipeline {
             steps {
                 script {
                     echo 'Compiling the project...'
-                    // Clean and install dependencies
-                    sh 'mvn clean install'
+                    // Clean and install dependencies, ensure tests run
+                    sh 'mvn clean install -DskipTests=false'
                 }
             }
         }
@@ -84,6 +84,9 @@ pipeline {
             agent { label 'agent01' }
             steps {
                 script {
+                    echo 'Checking if Docker image exists before pushing...'
+                    sh 'docker images | grep gestion-station-ski:1.0'
+
                     echo 'Logging into Docker Hub...'
                     sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
 
@@ -96,12 +99,32 @@ pipeline {
             }
         }
 
+        stage('Security Scan with Trivy') {
+            agent { label 'agent01' }
+            steps {
+                script {
+                    echo 'Running Trivy security scan...'
+                    sh '''
+                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity CRITICAL,HIGH rab3oon/gestion-station-ski > trivy_report.txt
+                    '''
+                    echo "Security scan completed. Report saved to trivy_report.txt"
+                }
+            }
+        }
 
     }
 
     post {
         always {
             echo 'Pipeline execution completed!'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+            archiveArtifacts artifacts: 'trivy_report.txt', allowEmptyArchive: true
+        }
+        failure {
+            echo 'Pipeline failed.'
+            archiveArtifacts artifacts: 'trivy_report.txt', allowEmptyArchive: true
         }
     }
 }
