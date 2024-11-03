@@ -87,11 +87,15 @@ pipeline {
                     echo 'Logging into Docker Hub...'
                     sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
 
+                    echo 'Tagging Docker image...'
+                    sh 'docker tag gestion-station-ski:1.0 rab3oon/gestion-station-ski:1.0'
+
                     echo 'Pushing Docker image to Docker Hub...'
-                    sh 'docker push rab3oon/gestion-station-ski-1.0'
+                    sh 'docker push rab3oon/gestion-station-ski:1.0'
                 }
             }
         }
+
 
     }
 
