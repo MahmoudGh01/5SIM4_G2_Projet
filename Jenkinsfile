@@ -5,6 +5,7 @@ pipeline {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
         NEXUS_URL = 'http://192.168.50.5:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar'
+        DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
     }
 
     stages {
@@ -75,6 +76,19 @@ pipeline {
                         """
                     }
                     echo "Building Docker image completed!"
+                }
+            }
+        }
+
+        stage('Push Image to DockerHub') {
+            agent { label 'agent01' }
+            steps {
+                script {
+                    echo 'Logging into Docker Hub...'
+                    sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
+
+                    echo 'Pushing Docker image to Docker Hub...'
+                    sh 'docker push rab3oon/gestion-station-ski-1.0'
                 }
             }
         }
