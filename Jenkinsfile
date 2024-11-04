@@ -54,7 +54,7 @@ pipeline {
                               }
                         // Push Docker image
                         echo 'Pushing Docker image to Docker Hub...'
-                        sh 'docker push mahmoudgh01/gestion-station-ski:1.0'
+                        sh 'docker push chaabaniachref/timesheet-devops:1.0.0'
 
                         echo 'Docker image successfully pushed to Docker Hub!'
                         }
@@ -68,7 +68,7 @@ pipeline {
                 }
             }
         }
-    
+
         stage('NEXUS') {
             steps {
                 script {
