@@ -47,9 +47,28 @@ pipeline {
                         script {
                             echo 'Building Docker image...'
                             sh 'docker build -t chaabaniachref/timesheet-devops:1.0.0 .'
+
+                              // Login to Docker Hub with a single credential ID
+                              withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                              }
+                        // Push Docker image
+                        echo 'Pushing Docker image to Docker Hub...'
+                        sh 'docker push mahmoudgh01/gestion-station-ski:1.0'
+
+                        echo 'Docker image successfully pushed to Docker Hub!'
                         }
                     }
          }
+        stage('Docker Compose Up') {
+            steps {
+                script {
+                    echo 'Starting services with Docker Compose...'
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+    
         stage('NEXUS') {
             steps {
                 script {
