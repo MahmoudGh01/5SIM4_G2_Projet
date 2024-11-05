@@ -1,59 +1,68 @@
 pipeline {
     agent any
-    environment {
-        SONARQUBE_ENV = 'SonarQube'
-        SONAR_TOKEN = credentials('SonarToken')
-        
-    }
     stages {
-        stage("Clone Repository") {
+        stage("cloning") {
             steps {
-                git url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git', branch: 'MohamedAmineLarbi-5Sim4-G2'
+                echo "========cloning with git========"
+                git url: "git@github.com:Anas-REBAI/5SIM4_G2_Projet.git",
+                    branch: "MohamedAmineLarbi-5Sim4-G2",
+                    credentialsId:"github"
             }
         }
-        stage("Build") {
+        stage("compiling") {
             steps {
-                sh 'mvn clean package'
-                sh 'ls -la target/' // Check the target directory for JAR
+                echo "========compiling with maven========"
+                sh "mvn clean compile"
             }
         }
-        stage('SONARQUBE') {
+        stage("Testing") {
             steps {
-                script {
-                    withSonarQubeEnv("${SONARQUBE_ENV}") {
-                        sh """
-                            mvn sonar:sonar \
-                            -Dsonar.login=${SONAR_TOKEN} \
-                            -Dsonar.coverage.jacoco.xmlReportPaths=/target/site/jacoco/jacoco.xml
-                        """
-                    }
+                echo "========Testing with maven========"
+                sh "mvn clean test"
+            }
+        }
+        stage("Packaging") {
+            steps {
+                echo "========Packaging with maven========"
+                sh "mvn clean package"
+            }
+        }
+        stage("Scan"){
+            steps{
+                echo "========Analyzing with Sonarqube========"
+                withSonarQubeEnv(installationName: 'sonarqube-server'){
+                    sh 'mvn sonar:sonar'
                 }
             }
         }
-        stage('NEXUS') {
+
+        stage("Deploying nexus") {
             steps {
-                script {
-                    echo "Deploying to Nexus..."
-                    nexusArtifactUploader(
-                        nexusVersion: 'nexus3',
-                        protocol: 'http',
-                        nexusUrl: '192.168.50.4:8081',
-                        groupId: 'tn.esprit.spring',
-                        artifactId: 'gestion-station-ski',
-                        version: '1.0',
-                        repository: 'maven-releases',
-                        credentialsId: 'NEXUS',
-                        artifacts: [
-                            [
-                                artifactId: 'gestion-station-ski',
-                                classifier: '',
-                                file: 'target/gestion-station-ski-1.0.jar', // Relative path
-                                type: 'jar'
-                            ]
-                        ]
-                    )
-                    echo "Deployment to Nexus completed!"
+                echo "========Deploying to Nexus========"
+                sh 'mvn clean deploy -DskipTests'
+            }
+        }
+        stage("Building image"){
+            steps{
+                sh "docker build -t mohamedaminelarbi/mohamedaminelarbi_stationski . "
+            }
+        }
+        stage("Pushing to DockerHub") {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    sh "docker push mohamedaminelarbi/mohamedaminelarbi_stationski"
                 }
+            }
+        }
+        stage("Stoping containers"){
+            steps{
+                sh "docker-compose down"
+            }
+        }
+        stage("Running containers"){
+            steps{
+                sh "docker-compose up -d"
             }
         }
     }
@@ -62,7 +71,7 @@ pipeline {
             echo "========always========"
         }
         success {
-            echo "========pipeline executed successfully ========"
+            echo "========pipeline executed successfully========"
         }
         failure {
             echo "========pipeline execution failed========"
