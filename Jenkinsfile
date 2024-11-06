@@ -6,7 +6,6 @@ pipeline {
         SONAR_TOKEN = credentials('SonarToken')
         DOCKER_CREDENTIALS_ID = 'DOCKER'
         DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
-
     }
 
     stages {
