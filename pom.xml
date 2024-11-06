@@ -7,7 +7,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.6.9</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 
 	<groupId>tn.esprit.spring</groupId>
@@ -65,16 +65,29 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- JUnit 5 Dependencies (JUnit Jupiter) -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.7.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.2</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Mockito for Unit Testing -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>4.11.0</version> <!-- Version should be the latest or as needed -->
+			<version>4.11.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
-	<!-- Deploy to Nexus -->
 	<distributionManagement>
 		<repository>
 			<id>deploymentRepo</id>
@@ -120,5 +133,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
