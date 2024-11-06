@@ -68,7 +68,7 @@ pipeline {
             steps {
                 script {
                     echo "======== Sending Email Notification ========"
-                    def sonarQubeUrl = 'http://192.168.33.10:9000/dashboard?id=5SIM4_G2_Projet'
+                    def sonarQubeUrl = 'http://192.168.33.10:9000/dashboard?id=tn.esprit.spring%3Agestion-station-ski'
                     mail to: 'mohamedamine.larbi@esprit.tn',
                          subject: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Finished",
                          body: """
