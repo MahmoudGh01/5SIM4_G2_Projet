@@ -19,7 +19,10 @@ public class PisteServicesImpl implements  IPisteServices{
 
     @Override
     public Piste addPiste(Piste piste) {
-        return pisteRepository.save(piste);
+        if (piste == null) {
+            throw new IllegalArgumentException("Piste cannot be null");
+        }
+        return pisteRepository.save(piste);  // Correctly use pisteRepository here
     }
 
     @Override
