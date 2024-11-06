@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.12</version>
+			<version>1.6.12</version> <!-- Version as per your choice -->
 		</dependency>
 
 		<!-- Spring Boot Testing -->
@@ -84,6 +84,22 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>4.11.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Byte Buddy for mocking in tests -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>1.12.3</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Byte Buddy Agent if using inline mock maker -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>1.12.3</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
