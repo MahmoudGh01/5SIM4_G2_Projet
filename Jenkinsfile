@@ -4,7 +4,8 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
-        DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
+        DOCKER_CREDENTIALS_ID = 'DOCKER'
+
     }
 
     stages {
@@ -43,34 +44,14 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') {
-            agent { label 'chaabaniachref' }
+        stage('Building image') {
             steps {
                 script {
-                    echo 'Building Docker image with Nexus credentials...'
-                    withCredentials([
-                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
-                    ]) {
-                        sh """
-                            docker build \
-                                --build-arg NEXUS_USER=$NEXUS_USER \
-                                --build-arg NEXUS_PASS=$NEXUS_PASS \
-                                --build-arg NEXUS_URL=$NEXUS_URL \
-                                -t gestion-station-ski:1.0 .
-                        """
-                    }
-                    echo "Building Docker image completed!"
+                    echo 'Building Docker image...'
+                    sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
                 }
             }
         }
-//          stage('Building image') {
-//              steps {
-//                  script {
-//                      echo 'Building Docker image...'
-//                      sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
-//                  }
-//              }
-//          }
          stage('Verify Image') {
              steps {
                  script {
@@ -78,7 +59,7 @@ pipeline {
                  }
              }
          }
-        stage('Push Image to DockerHub') {
+          stage('Push Image to DockerHub') {
             agent { label 'agent01' }
             steps {
                 script {
@@ -92,15 +73,7 @@ pipeline {
                     sh 'docker push chaabaniachref/gestion-station-ski:1.0'
                 }
             }
-        }
-//         stage('Docker Compose Up') {
-//             steps {
-//                 script {
-//                     echo 'Starting services with Docker Compose...'
-//                     sh 'docker compose up'
-//                 }
-//             }
-//         }
+         }
 
         stage('NEXUS') {
             steps {
