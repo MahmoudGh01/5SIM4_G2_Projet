@@ -35,12 +35,31 @@ pipeline {
                 }
             }
         }
-        stage("Deploying to Nexus") {
-            steps {
-                echo "======== Deploying to Nexus ========"
-                sh 'mvn clean deploy -DskipTests'
-            }
-        }
+    stage('Deploy to Nexus') {
+              steps {
+                  script {
+                      nexusArtifactUploader(
+                          nexusVersion: 'nexus3',
+                          protocol: 'http',
+                          nexusUrl: '192.168.33.10:8081',
+                          groupId: 'tn.esprit.spring',
+                          artifactId: 'gestion-station-ski',
+                          version: '1.0.0',
+                          repository: 'mohamedaminelarbi',
+                          credentialsId: 'NEXUS',
+                          artifacts: [
+                              [
+                                  artifactId: 'gestion-station-ski',
+                                  classifier: '',
+                                 file: 'target/gestion-station-ski-1.0.0.jar',
+                                  type: 'jar'
+                              ]
+                          ]
+                      )
+                  }
+              }
+          }
+
         stage("Building Docker Image") {
             steps {
                 sh "docker build -t mohamedaminelarbi/mohamedaminelarbi_stationski ."
