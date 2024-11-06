@@ -1,50 +1,49 @@
 pipeline {
     agent any
     stages {
-        stage("cloning") {
+        stage("Cloning") {
             steps {
-                echo "========cloning with git========"
+                echo "======== Cloning with Git ========"
                 git url: "git@github.com:Anas-REBAI/5SIM4_G2_Projet.git",
                     branch: "MohamedAmineLarbi-5Sim4-G2",
-                    credentialsId:"github"
+                    credentialsId: "github"
             }
         }
-        stage("compiling") {
+        stage("Compiling") {
             steps {
-                echo "========compiling with maven========"
+                echo "======== Compiling with Maven ========"
                 sh "mvn clean compile"
             }
         }
-        stage("Testing") {
+        stage("Testing (JUnit & Mockito)") {
             steps {
-                echo "========Testing with maven========"
+                echo "======== Running Unit Tests with Maven ========"
                 sh "mvn clean test"
             }
         }
         stage("Packaging") {
             steps {
-                echo "========Packaging with maven========"
+                echo "======== Packaging with Maven ========"
                 sh "mvn clean package"
             }
         }
-        stage("Scan"){
-            steps{
-                echo "========Analyzing with Sonarqube========"
-                withSonarQubeEnv(installationName: 'sonarqube-server'){
+        stage("SonarQube Scan") {
+            steps {
+                echo "======== Analyzing with SonarQube ========"
+                withSonarQubeEnv(installationName: 'sonarqube-server') {
                     sh 'mvn sonar:sonar'
                 }
             }
         }
-
-        stage("Deploying nexus") {
+        stage("Deploying to Nexus") {
             steps {
-                echo "========Deploying to Nexus========"
+                echo "======== Deploying to Nexus ========"
                 sh 'mvn clean deploy -DskipTests'
             }
         }
-        stage("Building image"){
-            steps{
-                sh "docker build -t mohamedaminelarbi/mohamedaminelarbi_stationski . "
+        stage("Building Docker Image") {
+            steps {
+                sh "docker build -t mohamedaminelarbi/mohamedaminelarbi_stationski ."
             }
         }
         stage("Pushing to DockerHub") {
@@ -55,26 +54,54 @@ pipeline {
                 }
             }
         }
-        stage("Stoping containers"){
-            steps{
+        stage("Stopping Containers") {
+            steps {
                 sh "docker-compose down"
             }
         }
-        stage("Running containers"){
-            steps{
+        stage("Running Containers") {
+            steps {
                 sh "docker-compose up -d"
+            }
+        }
+        stage("Mail Notification") {
+            steps {
+                script {
+                    echo "======== Sending Email Notification ========"
+                    def sonarQubeUrl = 'http://192.168.33.10:9000/dashboard?id=5SIM4_G2_Projet'
+                    mail to: 'mohamedamine.larbi@esprit.tn',
+                         subject: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Finished",
+                         body: """
+                            Job Name: ${env.JOB_NAME}
+                            Build Number: ${env.BUILD_NUMBER}
+                            Status: ${currentBuild.currentResult}
+                            Build URL: ${env.BUILD_URL}
+                            SonarQube Report: ${sonarQubeUrl}
+                         """
+                }
             }
         }
     }
     post {
-        always {
-            echo "========always========"
-        }
         success {
-            echo "========pipeline executed successfully========"
+            mail to: 'mohamedamine.larbi@esprit.tn',
+                 subject: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Succeeded",
+                 body: """
+                    Job Name: ${env.JOB_NAME}
+                    Build Number: ${env.BUILD_NUMBER}
+                    Status: SUCCESS
+                    Build URL: ${env.BUILD_URL}
+                 """
         }
         failure {
-            echo "========pipeline execution failed========"
+            mail to: 'mohamedamine.larbi@esprit.tn',
+                 subject: "Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' Failed",
+                 body: """
+                    Job Name: ${env.JOB_NAME}
+                    Build Number: ${env.BUILD_NUMBER}
+                    Status: FAILURE
+                    Build URL: ${env.BUILD_URL}
+                 """
         }
     }
 }
