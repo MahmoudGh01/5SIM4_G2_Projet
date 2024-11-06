@@ -23,7 +23,7 @@ pipeline {
                 script {
                     // Clean and install dependencies
                     sh 'mvn clean install'
-
+                    sh 'ls -l target/gestion-station-ski-1.0.jar'
                     // Uncomment these lines if you want to run tests and package the application
                     // sh 'mvn test'
                     // sh 'mvn package'
@@ -45,22 +45,19 @@ pipeline {
             }
         }
          stage('Building image') {
-                    steps {
-                        script {
-                            echo 'Building Docker image...'
-                            sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
-
-                              // Login to Docker Hub with a single credential ID
-                              withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                              }
-                        // Push Docker image
-                        echo 'Pushing Docker image to Docker Hub...'
-                        sh 'docker push chaabaniachref/gestion-station-ski:1.0'
-
-                        echo 'Docker image successfully pushed to Docker Hub!'
-                        }
-                    }
+             steps {
+                 script {
+                     echo 'Building Docker image...'
+                     sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
+                 }
+             }
+         }
+         stage('Verify Image') {
+             steps {
+                 script {
+                     sh 'docker images | grep chaabaniachref/gestion-station-ski'
+                 }
+             }
          }
         stage('Docker Compose Up') {
             steps {
