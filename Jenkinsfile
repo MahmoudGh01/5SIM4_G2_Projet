@@ -4,6 +4,8 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
+        DOCKER_CREDENTIALS_ID = 'DOCKER'
+
     }
 
     stages {
