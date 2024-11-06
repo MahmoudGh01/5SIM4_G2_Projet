@@ -15,7 +15,7 @@ services:
   app-timesheet:
     depends_on:
       - mysqldb
-    image: chaabaniachref/timesheet-devops:1.0.0
+    image: chaabaniachref/gestion-station-ski:1.0
     restart: on-failure
     ports:
       - 8082:8082

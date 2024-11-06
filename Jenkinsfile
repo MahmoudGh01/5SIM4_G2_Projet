@@ -46,7 +46,7 @@ pipeline {
                     steps {
                         script {
                             echo 'Building Docker image...'
-                            sh 'docker build -t chaabaniachref/timesheet-devops:1.0.0 .'
+                            sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
 
                               // Login to Docker Hub with a single credential ID
                               withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
@@ -54,7 +54,7 @@ pipeline {
                               }
                         // Push Docker image
                         echo 'Pushing Docker image to Docker Hub...'
-                        sh 'docker push chaabaniachref/timesheet-devops:1.0.0'
+                        sh 'docker push chaabaniachref/gestion-station-ski:1.0'
 
                         echo 'Docker image successfully pushed to Docker Hub!'
                         }
