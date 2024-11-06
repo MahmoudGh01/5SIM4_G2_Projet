@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-class PisteServiceImplTest {  // Updated class name to match the file name
+class PisteServiceImplTest {
 
     @Mock
     private IPisteRepository pisteRepository;
@@ -59,10 +59,14 @@ class PisteServiceImplTest {  // Updated class name to match the file name
         assertEquals(Color.GREEN, result.getColor());
     }
 
-
+    @Test
+    void testAddPiste_NullInput() {
+        Piste newPiste = null;
+        assertThrows(IllegalArgumentException.class, () -> pisteServiceImpl.addPiste(newPiste));
+    }
 
     @Test
-    void testRetrievePiste() {
+    void testRetrievePiste_ExistingId() {
         Long pisteId = 1L;
 
         Piste retrievedPiste = Piste.builder()
@@ -84,7 +88,18 @@ class PisteServiceImplTest {  // Updated class name to match the file name
     }
 
     @Test
-    void testRemovePiste() {
+    void testRetrievePiste_NonExistingId() {
+        Long pisteId = 1L;
+
+        when(pisteRepository.findById(pisteId)).thenReturn(Optional.empty());
+
+        Piste result = pisteServiceImpl.retrievePiste(pisteId);
+
+        assertNull(result, "Expected null when piste ID is not found");
+    }
+
+    @Test
+    void testRemovePiste_ValidId() {
         Long pisteId = 1L;
 
         doNothing().when(pisteRepository).deleteById(pisteId);
@@ -92,6 +107,15 @@ class PisteServiceImplTest {  // Updated class name to match the file name
         pisteServiceImpl.removePiste(pisteId);
 
         verify(pisteRepository, times(1)).deleteById(pisteId);
+    }
+
+    @Test
+    void testRemovePiste_InvalidId() {
+        Long pisteId = -1L;
+
+        doThrow(new IllegalArgumentException("Invalid piste ID")).when(pisteRepository).deleteById(pisteId);
+
+        assertThrows(IllegalArgumentException.class, () -> pisteServiceImpl.removePiste(pisteId));
     }
 
     @Test
@@ -107,5 +131,33 @@ class PisteServiceImplTest {  // Updated class name to match the file name
 
         assertEquals(2, result.size());
         verify(pisteRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testRetrieveAllPistes_NoPistes() {
+        when(pisteRepository.findAll()).thenReturn(Arrays.asList());
+
+        List<Piste> result = pisteServiceImpl.retrieveAllPistes();
+
+        assertTrue(result.isEmpty(), "Expected an empty list when no pistes are available");
+    }
+
+    @Test
+    void testRetrievePisteWithBoundaryValues() {
+        Piste boundaryPiste = Piste.builder()
+                .numPiste(2L)
+                .namePiste("Boundary Slope")
+                .color(Color.BLUE)
+                .length(0) // testing lower boundary
+                .slope(90) // testing upper boundary
+                .build();
+
+        when(pisteRepository.save(boundaryPiste)).thenReturn(boundaryPiste);
+
+        Piste result = pisteServiceImpl.addPiste(boundaryPiste);
+
+        assertNotNull(result);
+        assertEquals(0, result.getLength(), "Length should match the boundary value 0");
+        assertEquals(90, result.getSlope(), "Slope should match the boundary value 90");
     }
 }
