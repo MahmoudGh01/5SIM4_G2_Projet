@@ -23,7 +23,6 @@ pipeline {
                 script {
                     // Clean and install dependencies
                     sh 'mvn clean install'
-                    sh 'ls -l target/gestion-station-ski-1.0.jar'
                     // Uncomment these lines if you want to run tests and package the application
                     // sh 'mvn test'
                     // sh 'mvn package'
@@ -51,6 +50,18 @@ pipeline {
                     sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
                 }
             }
+            post {
+                success {
+                    mail to: 'achref.chaabani@esprit.tn',
+                        subject: "Build Backend",
+                        body: "Building Docker image succeeded."
+                }
+                failure {
+                    mail to: 'hamza.bouzidi@esprit.tn',
+                         subject: "Build Backend",
+                         body: "Building Docker image failed."
+                }
+            }
         }
          stage('Verify Image') {
              steps {
@@ -64,7 +75,7 @@ pipeline {
             steps {
                 script {
                     echo 'Logging into Docker Hub...'
-                    sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
+                    sh 'docker login -u chaabaniachref -p $DOCKER_HUB_CREDENTIALS_PSW'
 
                     echo 'Tagging Docker image...'
                     sh 'docker tag gestion-station-ski:1.0 chaabaniachref/gestion-station-ski:1.0'
