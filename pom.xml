@@ -55,7 +55,20 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.12</version> <!-- Version as per your choice -->
+			<version>1.6.12</version>
+		</dependency>
+
+		<!-- Add Spring Boot Actuator for monitoring and metrics -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<!-- Add Micrometer Prometheus Registry for exposing metrics to Prometheus -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<version>1.10.0</version> <!-- Use the appropriate version -->
 		</dependency>
 
 		<!-- Spring Boot Testing -->
