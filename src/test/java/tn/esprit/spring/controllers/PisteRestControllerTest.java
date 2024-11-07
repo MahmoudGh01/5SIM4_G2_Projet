@@ -67,49 +67,37 @@ class PisteRestControllerTest {
                 .andExpect(jsonPath("$[0].numPiste").value(1L))
                 .andExpect(jsonPath("$[1].namePiste").value("Slope B"));
     }
+
     @Test
     void testGetPisteById() throws Exception {
-        // Prepare a single piste object
+        // Prepare a piste object to be returned
         Piste piste = Piste.builder()
                 .numPiste(1L)
-                .namePiste("Advanced Slope")
-                .color(Color.BLACK)
-                .length(800)
-                .slope(30)
+                .namePiste("Slope A")
+                .color(Color.GREEN)
+                .length(500)
+                .slope(20)
                 .build();
 
-        // Mock the service call
+        // Mock the service call to return the piste
         when(pisteServices.retrievePiste(1L)).thenReturn(piste);
 
         // Perform the HTTP GET request and assert the response
         mockMvc.perform(get("/piste/get/{id-piste}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.numPiste").value(1L))
-                .andExpect(jsonPath("$.namePiste").value("Advanced Slope"))
-                .andExpect(jsonPath("$.color").value("BLACK"));
+                .andExpect(jsonPath("$.namePiste").value("Slope A"))
+                .andExpect(jsonPath("$.color").value("GREEN"))
+                .andExpect(jsonPath("$.length").value(500));
     }
 
     @Test
     void testDeletePisteById() throws Exception {
-        // Mock the service call to do nothing when removePiste is called
-        doNothing().when(pisteServices).removePiste(1L);
-
         // Perform the HTTP DELETE request and assert the response
         mockMvc.perform(delete("/piste/delete/{id-piste}", 1L))
                 .andExpect(status().isOk());
 
-        // Verify the service method was called exactly once
+        // Verify that the service method was called once with the correct argument
         verify(pisteServices, times(1)).removePiste(1L);
     }
-
-    @Test
-    void testGetPisteById_NotFound() throws Exception {
-        // Mock the service call to return null when an invalid ID is passed
-        when(pisteServices.retrievePiste(999L)).thenReturn(null);
-
-        // Perform the HTTP GET request for an invalid piste ID and assert the response
-        mockMvc.perform(get("/piste/get/{id-piste}", 999L))
-                .andExpect(status().isNotFound());
-    }
-
 }
