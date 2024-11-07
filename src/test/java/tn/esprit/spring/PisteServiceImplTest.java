@@ -33,75 +33,70 @@ class PisteServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    // Helper method to create Piste objects
+    private Piste createPiste(Long id, String name, Color color, int length, int slope) {
+        return Piste.builder()
+                .numPiste(id)
+                .namePiste(name)
+                .color(color)
+                .length(length)
+                .slope(slope)
+                .build();
+    }
+
+    // Helper method to assert Piste properties
+    private void assertPiste(Piste piste, Long expectedId, String expectedName, Color expectedColor, int expectedLength, int expectedSlope) {
+        assertNotNull(piste);
+        assertEquals(expectedId, piste.getNumPiste());
+        assertEquals(expectedName, piste.getNamePiste());
+        assertEquals(expectedColor, piste.getColor());
+        assertEquals(expectedLength, piste.getLength());
+        assertEquals(expectedSlope, piste.getSlope());
+    }
+
     @Test
     void testAddPiste_Valid() {
-        Piste newPiste = Piste.builder()
-                .namePiste("Beginner's Slope")
-                .color(Color.GREEN)
-                .length(500)
-                .slope(15)
-                .build();
-
-        Piste savedPiste = Piste.builder()
-                .numPiste(1L)
-                .namePiste("Beginner's Slope")
-                .color(Color.GREEN)
-                .length(500)
-                .slope(15)
-                .build();
+        Piste newPiste = createPiste(null, "Beginner's Slope", Color.GREEN, 500, 15);
+        Piste savedPiste = createPiste(1L, "Beginner's Slope", Color.GREEN, 500, 15);
 
         when(pisteRepository.save(newPiste)).thenReturn(savedPiste);
 
         Piste result = pisteServiceImpl.addPiste(newPiste);
 
-        assertNotNull(result.getNumPiste());
-        assertEquals("Beginner's Slope", result.getNamePiste());
-        assertEquals(Color.GREEN, result.getColor());
+        // Using helper method for assertions
+        assertPiste(result, 1L, "Beginner's Slope", Color.GREEN, 500, 15);
     }
 
     @Test
     void testAddPiste_NullInput() {
-        Piste newPiste = null;
-        assertThrows(IllegalArgumentException.class, () -> pisteServiceImpl.addPiste(newPiste));
+        assertThrows(IllegalArgumentException.class, () -> pisteServiceImpl.addPiste(null));
     }
 
     @Test
     void testRetrievePiste_ExistingId() {
         Long pisteId = 1L;
-
-        Piste retrievedPiste = Piste.builder()
-                .numPiste(pisteId)
-                .namePiste("Advanced Slope")
-                .color(Color.BLACK)
-                .length(800)
-                .slope(30)
-                .build();
+        Piste retrievedPiste = createPiste(pisteId, "Advanced Slope", Color.BLACK, 800, 30);
 
         when(pisteRepository.findById(pisteId)).thenReturn(Optional.of(retrievedPiste));
 
         Piste result = pisteServiceImpl.retrievePiste(pisteId);
 
-        assertNotNull(result);
-        assertEquals(pisteId, result.getNumPiste());
-        assertEquals("Advanced Slope", result.getNamePiste());
-        assertEquals(Color.BLACK, result.getColor());
+        // Using helper method for assertions
+        assertPiste(result, pisteId, "Advanced Slope", Color.BLACK, 800, 30);
     }
 
     @Test
     void testRetrievePiste_NonExistingId() {
         Long pisteId = 1L;
-
         when(pisteRepository.findById(pisteId)).thenReturn(Optional.empty());
 
         Piste result = pisteServiceImpl.retrievePiste(pisteId);
-
         assertNull(result, "Expected null when piste ID is not found");
     }
 
     @Test
     void testRemovePiste_ValidId() {
         Long pisteId = 1L;
-
         doNothing().when(pisteRepository).deleteById(pisteId);
 
         pisteServiceImpl.removePiste(pisteId);
@@ -112,7 +107,6 @@ class PisteServiceImplTest {
     @Test
     void testRemovePiste_InvalidId() {
         Long pisteId = -1L;
-
         doThrow(new IllegalArgumentException("Invalid piste ID")).when(pisteRepository).deleteById(pisteId);
 
         assertThrows(IllegalArgumentException.class, () -> pisteServiceImpl.removePiste(pisteId));
@@ -121,10 +115,9 @@ class PisteServiceImplTest {
     @Test
     void testRetrieveAllPistes() {
         List<Piste> pistes = Arrays.asList(
-                Piste.builder().numPiste(1L).namePiste("Slope A").color(Color.GREEN).build(),
-                Piste.builder().numPiste(2L).namePiste("Slope B").color(Color.RED).build()
+                createPiste(1L, "Slope A", Color.GREEN, 500, 20),
+                createPiste(2L, "Slope B", Color.RED, 600, 25)
         );
-
         when(pisteRepository.findAll()).thenReturn(pistes);
 
         List<Piste> result = pisteServiceImpl.retrieveAllPistes();
@@ -138,26 +131,18 @@ class PisteServiceImplTest {
         when(pisteRepository.findAll()).thenReturn(Arrays.asList());
 
         List<Piste> result = pisteServiceImpl.retrieveAllPistes();
-
         assertTrue(result.isEmpty(), "Expected an empty list when no pistes are available");
     }
 
     @Test
     void testRetrievePisteWithBoundaryValues() {
-        Piste boundaryPiste = Piste.builder()
-                .numPiste(2L)
-                .namePiste("Boundary Slope")
-                .color(Color.BLUE)
-                .length(0) // testing lower boundary
-                .slope(90) // testing upper boundary
-                .build();
+        Piste boundaryPiste = createPiste(2L, "Boundary Slope", Color.BLUE, 0, 90);
 
         when(pisteRepository.save(boundaryPiste)).thenReturn(boundaryPiste);
 
         Piste result = pisteServiceImpl.addPiste(boundaryPiste);
 
-        assertNotNull(result);
-        assertEquals(0, result.getLength(), "Length should match the boundary value 0");
-        assertEquals(90, result.getSlope(), "Slope should match the boundary value 90");
+        // Using helper method for assertions
+        assertPiste(result, 2L, "Boundary Slope", Color.BLUE, 0, 90);
     }
 }
