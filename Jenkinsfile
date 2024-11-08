@@ -47,7 +47,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    sh 'docker build -t chaabaniachref/AchrefChaabani-gestion-station-ski:1.0 .'
+                    sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
                 }
             }
 //             post {
@@ -89,7 +89,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
                         sh 'docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASS'
-                        sh 'docker push chaabaniachref/AchrefChaabani-gestion-station-ski:1.0'
+                        sh 'docker push chaabaniachref/gestion-station-ski:1.0'
                     }
                 }
             }
