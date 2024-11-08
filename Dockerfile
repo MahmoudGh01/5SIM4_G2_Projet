@@ -1,8 +1,8 @@
 # Use OpenJDK 17 as the base image
 FROM openjdk:17-jdk-alpine
 
-# Expose port 8082
-EXPOSE 8082
+# Expose port 9005
+EXPOSE 9005
 
 # Set environment variables for Nexus credentials and URL
 ARG NEXUS_USER

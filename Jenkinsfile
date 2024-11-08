@@ -99,17 +99,35 @@ pipeline {
         stage('Security Scan with Trivy') {
             agent { label 'agent01' }
             steps {
-                script {
-                    echo 'Running Trivy security scan...'
-                    sh '''
-                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --scanners vuln --severity CRITICAL,HIGH rab3oon/gestion-station-ski:1.0 > trivy_report.txt
-                    '''
-                    echo "Security scan completed. Report saved to trivy_report.txt"
-
-                    // Affiche le rapport de sécurité
-                    sh 'cat trivy_report.txt'
-                }
+                           script {
+                               // Run Trivy scan using offline mode
+                               sh "trivy image  rab3oon/gestion-station-ski:1.0 >trivy_report.txt"
+                           }
             }
+        }
+
+
+        stage('Deploy to AKS') {
+                    agent { label 'agent01' }
+                    steps {
+                        script {
+                            def clusterExists = sh(script: 'kubectl get nodes', returnStatus: true) == 0
+
+                            if (clusterExists) {
+                                echo "The AKS cluster exists and is accessible."
+                                sh 'kubectl apply -f deploy.yml'
+                            } else {
+                                echo "The AKS cluster does not exist. Creating the cluster with Terraform."
+                                sh '''
+                                     terraform init
+                                     terraform apply -auto-approve
+                                '''
+                                sleep 60
+                                sh 'az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing'
+                                sh 'kubectl apply -f deploy.yml'
+                            }
+                        }
+                    }
         }
 
     }
