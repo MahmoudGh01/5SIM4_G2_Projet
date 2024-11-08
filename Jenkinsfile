@@ -52,12 +52,12 @@ pipeline {
             }
             post {
                 success {
-                    mail to: 'achref.chaabani@esprit.tn',
+                    mail to: 'chaabaniachref212@gmail.com',
                         subject: "Build Backend - Success",
                         body: "The Docker image was built successfully."
                 }
                 failure {
-                    mail to: 'achref.chaabani@esprit.tn',
+                    mail to: 'chaabaniachref212@gmail.com',
                         subject: "Build Backend - Failure",
                         body: "Building the Docker image failed."
                 }
