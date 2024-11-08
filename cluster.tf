@@ -5,7 +5,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "myterraformgroup" {
   name     = "myResourceGroup"
-  location = "eastus"
+  location = "Australia Central"
 }
 
 resource "azurerm_kubernetes_cluster" "myakscluster" {
@@ -17,7 +17,7 @@ resource "azurerm_kubernetes_cluster" "myakscluster" {
   default_node_pool {
     name            = "default"
     node_count      = 2
-    vm_size         = "Standard_L8as_v3"  # Increased VM size to meet the requirements
+    vm_size         = "Standard_DS2_v2"
     os_disk_size_gb = 30
   }
 
