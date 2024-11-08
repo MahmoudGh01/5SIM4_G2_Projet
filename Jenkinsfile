@@ -72,7 +72,7 @@ pipeline {
                                 --build-arg NEXUS_USER=$NEXUS_USER \
                                 --build-arg NEXUS_PASS=$NEXUS_PASS \
                                 --build-arg NEXUS_URL=$NEXUS_URL \
-                                -t gestion-station-ski:1.0 .
+                                -t gestion-station-ski:latest .
                         """
                     }
                     echo "Building Docker image completed!"
@@ -88,10 +88,10 @@ pipeline {
                     sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
 
                     echo 'Tagging Docker image...'
-                    sh 'docker tag gestion-station-ski:1.0 rab3oon/gestion-station-ski:1.0'
+                    sh 'docker tag gestion-station-ski:latest rab3oon/gestion-station-ski:latest'
 
                     echo 'Pushing Docker image to Docker Hub...'
-                    sh 'docker push rab3oon/gestion-station-ski:1.0'
+                    sh 'docker push rab3oon/gestion-station-ski:latest'
                 }
             }
         }
@@ -101,7 +101,7 @@ pipeline {
             steps {
                            script {
                                // Run Trivy scan using offline mode
-                               sh "trivy image  rab3oon/gestion-station-ski:1.0 >trivy_report.txt"
+                               sh "trivy image  rab3oon/gestion-station-ski:latest >trivy_report.txt"
                            }
             }
         }
