@@ -50,18 +50,18 @@ pipeline {
                     sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
                 }
             }
-            post {
-                success {
-                    mail to: 'chaabaniachref212@gmail.com',
-                        subject: "Build Backend - Success",
-                        body: "The Docker image was built successfully."
-                }
-                failure {
-                    mail to: 'chaabaniachref212@gmail.com',
-                        subject: "Build Backend - Failure",
-                        body: "Building the Docker image failed."
-                }
-            }
+//             post {
+//                 success {
+//                     mail to: 'chaabaniachref212@gmail.com',
+//                         subject: "Build Backend - Success",
+//                         body: "The Docker image was built successfully."
+//                 }
+//                 failure {
+//                     mail to: 'chaabaniachref212@gmail.com',
+//                         subject: "Build Backend - Failure",
+//                         body: "Building the Docker image failed."
+//                 }
+//             }
         }
          stage('Verify Image') {
              steps {
