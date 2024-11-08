@@ -70,21 +70,31 @@ pipeline {
                  }
              }
          }
-          stage('Push Image to DockerHub') {
+//           stage('Push Image to DockerHub') {
+//             steps {
+//                 script {
+//                     echo 'Logging into Docker Hub...'
+//                     sh 'docker login -u chaabaniachref -p $DOCKER_HUB_CREDENTIALS_PSW'
+//
+//                     echo 'Tagging Docker image...'
+//                     sh 'docker tag gestion-station-ski:1.0 chaabaniachref/gestion-station-ski:1.0'
+//
+//                     echo 'Pushing Docker image to Docker Hub...'
+//                     sh 'docker push chaabaniachref/gestion-station-ski:1.0'
+//                 }
+//             }
+//          }
+        stage('Push Docker Image') {
             steps {
                 script {
-                    echo 'Logging into Docker Hub...'
-                    sh 'docker login -u chaabaniachref -p $DOCKER_HUB_CREDENTIALS_PSW'
-
-                    echo 'Tagging Docker image...'
-                    sh 'docker tag gestion-station-ski:1.0 chaabaniachref/gestion-station-ski:1.0'
-
-                    echo 'Pushing Docker image to Docker Hub...'
-                    sh 'docker push chaabaniachref/gestion-station-ski:1.0'
+                    withCredentials([usernamePassword(credentialsId: 'docker-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        sh 'docker tag gestion-station-ski:1.0 chaabaniachref/gestion-station-ski:1.0'
+                        sh 'docker push chaabaniachref/gestion-station-ski:1.0'
+                    }
                 }
             }
-         }
-
+        }
         stage('NEXUS') {
             steps {
                 script {
