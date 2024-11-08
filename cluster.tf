@@ -5,7 +5,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "myterraformgroup" {
   name     = "myResourceGroup"
-  location = "eastus"
+  location = "East US"
 }
 
 resource "azurerm_kubernetes_cluster" "myakscluster" {
