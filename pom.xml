@@ -18,7 +18,6 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -48,24 +47,37 @@
 			<version>1.18.24</version>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
-		</dependency>
+
+		<!-- OpenAPI UI for Swagger support -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.12</version>
 		</dependency>
+
+		<!-- Byte Buddy (Fixed version) -->
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy</artifactId>
+			<version>1.12.21</version>
+		</dependency>
+		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>1.12.21</version>
+		</dependency>
+
+		<!-- Spring Boot Actuator (For metrics, health, etc.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
+
+		<!-- Prometheus Registry for Micrometer -->
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
-			<version>1.10.0</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- Spring Boot Testing -->
@@ -97,19 +109,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Byte Buddy for mocking in tests -->
-		<dependency>
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy</artifactId>
-			<version>1.12.3</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy-agent</artifactId>
-			<version>1.12.3</version>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 	<distributionManagement>
