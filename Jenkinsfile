@@ -87,8 +87,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'docker', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
+                        sh 'docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASS'
                         sh 'docker tag gestion-station-ski:1.0 chaabaniachref/gestion-station-ski:1.0'
                         sh 'docker push chaabaniachref/gestion-station-ski:1.0'
                     }
