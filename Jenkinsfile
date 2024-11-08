@@ -138,11 +138,9 @@ pipeline {
         }
         success {
             echo 'Pipeline succeeded!'
-            archiveArtifacts artifacts: 'trivy_report.txt', allowEmptyArchive: true
         }
         failure {
             echo 'Pipeline failed.'
-            archiveArtifacts artifacts: 'trivy_report.txt', allowEmptyArchive: true
         }
     }
 }
