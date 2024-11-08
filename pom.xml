@@ -53,8 +53,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
-	<dependencies>
 		<!-- Other dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,6 +64,7 @@
 			<version>x.x.x</version>
 		</dependency>
 	</dependencies>
+
 	<!-- Deploy to Nexus -->
 	<distributionManagement>
 		<repository>
