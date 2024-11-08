@@ -71,7 +71,6 @@ pipeline {
              }
          }
           stage('Push Image to DockerHub') {
-            agent { label 'agent01' }
             steps {
                 script {
                     echo 'Logging into Docker Hub...'
