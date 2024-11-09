@@ -43,57 +43,6 @@ pipeline {
                 }
             }
         }
-        stage('Building image') {
-            steps {
-                script {
-                    echo 'Building Docker image...'
-                    sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
-                }
-            }
-//             post {
-//                 success {
-//                     mail to: 'chaabaniachref212@gmail.com',
-//                         subject: "Build Backend - Success",
-//                         body: "The Docker image was built successfully."
-//                 }
-//                 failure {
-//                     mail to: 'chaabaniachref212@gmail.com',
-//                         subject: "Build Backend - Failure",
-//                         body: "Building the Docker image failed."
-//                 }
-//             }
-        }
-         stage('Verify Image') {
-             steps {
-                 script {
-                     sh 'docker images | grep chaabaniachref/gestion-station-ski'
-                 }
-             }
-         }
-//           stage('Push Image to DockerHub') {
-//             steps {
-//                 script {
-//                     echo 'Logging into Docker Hub...'
-//                     sh 'docker login -u chaabaniachref -p $DOCKER_HUB_CREDENTIALS_PSW'
-//
-//                     echo 'Tagging Docker image...'
-//                     sh 'docker tag gestion-station-ski:1.0 chaabaniachref/gestion-station-ski:1.0'
-//
-//                     echo 'Pushing Docker image to Docker Hub...'
-//                     sh 'docker push chaabaniachref/gestion-station-ski:1.0'
-//                 }
-//             }
-//          }
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
-                        sh 'docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASS'
-                        sh 'docker push chaabaniachref/gestion-station-ski:1.0'
-                    }
-                }
-            }
-        }
         stage('NEXUS') {
             steps {
                 script {
@@ -122,6 +71,43 @@ pipeline {
                 }
             }
         }
+        stage('Building image') {
+            steps {
+                script {
+                    echo 'Building Docker image...'
+                    sh 'docker build -t chaabaniachref/gestion-station-ski:1.0 .'
+                }
+            }
+
+        }
+         stage('Verify Image') {
+             steps {
+                 script {
+                     sh 'docker images | grep chaabaniachref/gestion-station-ski'
+                 }
+             }
+         }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_HUB_CREDENTIALS', usernameVariable: 'DOCKER_HUB_USER', passwordVariable: 'DOCKER_HUB_PASS')]) {
+                        sh 'docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASS'
+                        sh 'docker push chaabaniachref/gestion-station-ski:1.0'
+                    }
+                }
+            }
+        }
+
+         stage('Docker Compose Up') {
+                    steps {
+                        script {
+                            echo 'Starting services with Docker Compose...'
+                            sh 'docker-compose up -d'
+                        }
+                    }
+         }
+
     }
 
     post {
