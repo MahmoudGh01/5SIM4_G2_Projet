@@ -10,7 +10,7 @@ pipeline {
 
     stages {
 
-        stage('Check GIT') {
+        stage('Checkout GIT') {
             agent { label 'master' }
             steps {
                 echo 'Pulling from Git repository...'
@@ -51,8 +51,10 @@ pipeline {
             steps {
                 script {
                     echo "Deploying artifact to Nexus..."
-                    withCredentials([usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                    sh 'mvn -X deploy -DskipTests=true -Dnexus.username=$NEXUS_USER -Dnexus.password=$NEXUS_PASS'
+                    withCredentials([
+                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
+                    ]) {
+                        sh 'mvn -X deploy -DskipTests=true -Dnexus.username=$NEXUS_USER -Dnexus.password=$NEXUS_PASS'
                     }
                     echo "Deployment to Nexus completed!"
                 }
@@ -99,35 +101,35 @@ pipeline {
         stage('Security Scan with Trivy') {
             agent { label 'agent01' }
             steps {
-                           script {
-                               // Run Trivy scan using offline mode
-                               sh "trivy image  rab3oon/gestion-station-ski:latest >trivy_report.txt"
-                           }
+                script {
+                    // Run Trivy scan using offline mode
+                    sh "trivy image  rab3oon/gestion-station-ski:latest >trivy_report.txt"
+                }
             }
         }
 
 
         stage('Deploy to AKS') {
-                    agent { label 'agent01' }
-                    steps {
-                        script {
-                            def clusterExists = sh(script: 'kubectl get nodes', returnStatus: true) == 0
+            agent { label 'agent01' }
+            steps {
+                script {
+                    def clusterExists = sh(script: 'kubectl get nodes', returnStatus: true) == 0
 
-                            if (clusterExists) {
-                                echo "The AKS cluster exists and is accessible."
-                                sh 'kubectl apply -f deploy.yml'
-                            } else {
-                                echo "The AKS cluster does not exist. Creating the cluster with Terraform."
-                                sh '''
-                                     terraform init
-                                     terraform apply -auto-approve
-                                '''
-                                sleep 60
-                                sh 'az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing'
-                                sh 'kubectl apply -f deploy.yml'
-                            }
-                        }
+                    if (clusterExists) {
+                        echo "The AKS cluster exists and is accessible."
+                        sh 'kubectl apply -f deploy.yml'
+                    } else {
+                        echo "The AKS cluster does not exist. Creating the cluster with Terraform."
+                        sh '''
+                            terraform init
+                            terraform apply -auto-approve
+                        '''
+                        sleep 60
+                        sh 'az aks get-credentials --resource-group myResourceGroup --name myAKSCluster --overwrite-existing'
+                        sh 'kubectl apply -f deploy.yml'
                     }
+                }
+            }
         }
 
     }
