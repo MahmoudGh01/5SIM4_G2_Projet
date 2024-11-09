@@ -103,7 +103,7 @@ pipeline {
                     steps {
                         script {
                             echo 'Starting services with Docker Compose...'
-                            sh 'docker-compose up -d'
+                            sh 'docker compose up -d'
                         }
                     }
          }
