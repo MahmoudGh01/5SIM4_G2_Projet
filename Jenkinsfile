@@ -4,7 +4,7 @@ pipeline {
     environment {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonarToken')
-        NEXUS_URL = 'http://192.168.50.5:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.1/gestion-station-ski-1.1.jar'
+        NEXUS_URL = 'http://192.168.50.5:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar'
         DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
     }
 
