@@ -6,10 +6,10 @@ pipeline {
         SONAR_TOKEN = credentials('SonarToken')
         NEXUS_URL = 'http://192.168.50.5:8081/repository/maven-releases/tn/esprit/spring/gestion-station-ski/1.0/gestion-station-ski-1.0.jar'
         DOCKER_HUB_CREDENTIALS = credentials('DockerHubCredentials')
+        IMAGE_TAG = 'v2' // Nouveau tag pour l'image Docker
     }
 
     stages {
-
         stage('Checkout GIT') {
             agent { label 'master' }
             steps {
@@ -24,7 +24,6 @@ pipeline {
             steps {
                 script {
                     echo 'Compiling the project...'
-                    // Clean and install dependencies, ensure tests run
                     sh 'mvn clean install -DskipTests=false'
                 }
             }
@@ -51,12 +50,9 @@ pipeline {
             steps {
                 script {
                     echo "Deploying artifact to Nexus..."
-                    withCredentials([
-                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
-                    ]) {
+                    withCredentials([usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                         sh 'mvn -X deploy -DskipTests=true -Dnexus.username=$NEXUS_USER -Dnexus.password=$NEXUS_PASS'
                     }
-                    echo "Deployment to Nexus completed!"
                 }
             }
         }
@@ -66,18 +62,15 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image with Nexus credentials...'
-                    withCredentials([
-                        usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')
-                    ]) {
+                    withCredentials([usernamePassword(credentialsId: 'NEXUS', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
                         sh """
                             docker build \
                                 --build-arg NEXUS_USER=$NEXUS_USER \
                                 --build-arg NEXUS_PASS=$NEXUS_PASS \
                                 --build-arg NEXUS_URL=$NEXUS_URL \
-                                -t gestion-station-ski:latest .
+                                -t gestion-station-ski:${IMAGE_TAG} .
                         """
                     }
-                    echo "Building Docker image completed!"
                 }
             }
         }
@@ -90,10 +83,10 @@ pipeline {
                     sh 'docker login -u $DOCKER_HUB_CREDENTIALS_USR -p $DOCKER_HUB_CREDENTIALS_PSW'
 
                     echo 'Tagging Docker image...'
-                    sh 'docker tag gestion-station-ski:latest rab3oon/gestion-station-ski:latest'
+                    sh "docker tag gestion-station-ski:${IMAGE_TAG} rab3oon/gestion-station-ski:${IMAGE_TAG}"
 
                     echo 'Pushing Docker image to Docker Hub...'
-                    sh 'docker push rab3oon/gestion-station-ski:latest'
+                    sh "docker push rab3oon/gestion-station-ski:${IMAGE_TAG}"
                 }
             }
         }
@@ -102,12 +95,11 @@ pipeline {
             agent { label 'agent01' }
             steps {
                 script {
-                    // Run Trivy scan using offline mode
-                    sh "trivy image  rab3oon/gestion-station-ski:latest >trivy_report.txt"
+                    // Trivy scan avec le nouveau tag
+                    sh "trivy image rab3oon/gestion-station-ski:${IMAGE_TAG} > trivy_report.txt"
                 }
             }
         }
-
 
         stage('Deploy to AKS') {
             agent { label 'agent01' }
@@ -131,7 +123,6 @@ pipeline {
                 }
             }
         }
-
     }
 
     post {
