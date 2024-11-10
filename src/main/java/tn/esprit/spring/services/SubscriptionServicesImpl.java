@@ -39,6 +39,10 @@ public class SubscriptionServicesImpl implements ISubscriptionServices{
         return subscriptionRepository.save(subscription);
     }
 
+    public void removeSubscription(Long numSub) {
+        subscriptionRepository.deleteById(numSub);
+    }
+
     @Override
     public Subscription updateSubscription(Subscription subscription) {
         return subscriptionRepository.save(subscription);
