@@ -108,7 +108,7 @@ pipeline {
         success {
             emailext(
                 subject: "SUCCESS: Jenkins Pipeline Completed",
-                body: "The Jenkins pipeline for project 'gestion-station-ski' completed successfully.",
+                body: "The Jenkins pieline for project 'gestion-station-ski' completed successfully.",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']],
                 to: 'mahmoudgharbi@icloud.com'
             )
