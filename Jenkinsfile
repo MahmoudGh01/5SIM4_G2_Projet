@@ -116,7 +116,7 @@ pipeline {
 
         failure {
             emailext(
-                subject: "FAILUREE: Jenkins Pipeline Failed",
+                subject: "FAILUREEE: Jenkins Pipeline Failed",
                 body: "The JJenkins pipeline for project 'gessttion-station-ski' faileeed. Please check the console output for more details.",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']],
                 to: 'mahmoudgharbi@icloud.com'
