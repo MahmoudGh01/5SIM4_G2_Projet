@@ -68,6 +68,7 @@ pipeline {
                 }
             }
         }
+
          stage('Docker Build and Push') {
                     steps {
                         script {
@@ -116,7 +117,7 @@ pipeline {
         failure {
             emailext(
                 subject: "FAILURE: Jenkins Pipeline Failed",
-                body: "The Jenkins pipeline for project 'gestion-station-ski' failed. Please check the console output for more details.",
+                body: "The Jenkins pipeline for project 'gestion-station-ski' failed. Please check the console output for more detail.",
                 recipientProviders: [[$class: 'DevelopersRecipientProvider']],
                 to: 'mahmoudgharbi@icloud.com'
             )
