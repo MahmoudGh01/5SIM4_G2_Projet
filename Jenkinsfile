@@ -101,28 +101,55 @@ pipeline {
     }
 
  post {
-        always {
-            echo 'Pipeline execution completed!'
-        }
+     always {
+         echo 'Pipeline execution completed!'
+     }
 
-        success {
-            emailext(
-                subject: "SUCCESS: Jenkins Pipeline Completed",
-                body: "The Jenkins pieline for project 'gestion-station-ski' completed successfully.",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mahmoudgharbi@icloud.com'
-            )
-        }
+     success {
+         emailext(
+             subject: "✅ SUCCESS: Jenkins Pipeline Completed",
+             body: """
+                 <h2 style="color: green;">Jenkins Pipeline - SUCCESS</h2>
+                 <p>The Jenkins pipeline for project <strong>gestion-station-ski</strong> has completed successfully.</p>
+                 <p><strong>Pipeline Details:</strong></p>
+                 <ul>
+                     <li>Project: <strong>gestion-station-ski</strong></li>
+                     <li>Status: <strong>Success</strong></li>
+                     <li>Duration: ${currentBuild.durationString}</li>
+                     <li>Triggered by: ${currentBuild.getBuildCauses()}</li>
+                 </ul>
+                 <p>Click <a href="${env.BUILD_URL}console">here</a> to view the full console output.</p>
+                 <p>Thank you,<br>Jenkins Pipeline</p>
+             """,
+             mimeType: 'text/html',
+             recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+             to: 'mahmoudgharbi@icloud.com'
+         )
+     }
 
-        failure {
-            emailext(
-                subject: "FAILUREE: Jenkins Pipeline Failed",
-                body: "The JJenkins pipeline for project 'gessttion-station-ski' failed. Please check the console output for more details.",
-                recipientProviders: [[$class: 'DevelopersRecipientProvider']],
-                to: 'mahmoudgharbi@icloud.com'
-            )
-        }
-    }
+     failure {
+         emailext(
+             subject: "❌ FAILURE: Jenkins Pipeline Failed",
+             body: """
+                 <h2 style="color: red;">Jenkins Pipeline - FAILURE</h2>
+                 <p>The Jenkins pipeline for project <strong>gestion-station-ski</strong> has failed.</p>
+                 <p><strong>Pipeline Details:</strong></p>
+                 <ul>
+                     <li>Project: <strong>gestion-station-ski</strong></li>
+                     <li>Status: <strong>Failure</strong></li>
+                     <li>Duration: ${currentBuild.durationString}</li>
+                     <li>Triggered by: ${currentBuild.getBuildCauses()}</li>
+                 </ul>
+                 <p>Click <a href="${env.BUILD_URL}console">here</a> to view the full console output and investigate the issue.</p>
+                 <p>Thank you,<br>Jenkins Pipeline</p>
+             """,
+             mimeType: 'text/html',
+             recipientProviders: [[$class: 'DevelopersRecipientProvider']],
+             to: 'mahmoudgharbi@icloud.com'
+         )
+     }
+ }
+
 }
 
 
