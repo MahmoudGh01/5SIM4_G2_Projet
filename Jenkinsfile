@@ -101,20 +101,20 @@ pipeline {
             }
         }
 
-          /*       stage('Deploy to Kubernetes') {
+           stage('Deploy to Kubernetes') {
                     steps {
                         script {
 
-                             kubeconfig(credentialsId: 'kubeconfig') {
+                             kubeconfig(credentialsId: 'kubernetes') {
 
-                                sh 'kubectl apply -f k8s/deployment.yaml -n ${env.K8S_NAMESPACE}'
-                                sh 'kubectl apply -f k8s/service.yaml -n ${env.K8S_NAMESPACE}'
+                                sh 'kubectl apply -f deploy.yml'
+                               // sh 'kubectl apply -f k8s/service.yaml -n ${env.K8S_NAMESPACE}'
                             }
 
 
                         }
                     }
-                } */
+                }
     }
 
  post {
