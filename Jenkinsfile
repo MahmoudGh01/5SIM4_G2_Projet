@@ -105,11 +105,11 @@ pipeline {
                     steps {
                         script {
 
-                             kubeconfig(credentialsId: 'kubernetes') {
+
 
                                 sh 'kubectl apply -f deploy.yml'
                                // sh 'kubectl apply -f k8s/service.yaml -n ${env.K8S_NAMESPACE}'
-                            }
+
 
 
                         }
