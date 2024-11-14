@@ -13,7 +13,7 @@ pipeline {
 
         stage('GIT') {
             steps {
-                echo 'Pulling from Git...'
+                echo 'Pulling from Git.....'
                 git branch: 'MahmoudGharbi-5sin4-G2',
                     url: 'https://github.com/Anas-REBAI/5SIM4_G2_Projet.git'
             }
