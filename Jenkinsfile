@@ -101,20 +101,7 @@ pipeline {
             }
         }
 
-           stage('Deploy to Kubernetes') {
-                    steps {
-                        script {
-
-
-
-                                sh 'kubectl apply -f deploy.yml'
-                               // sh 'kubectl apply -f k8s/service.yaml -n ${env.K8S_NAMESPACE}'
-
-
-
-                        }
-                    }
-                }
+   
     }
 
  post {
