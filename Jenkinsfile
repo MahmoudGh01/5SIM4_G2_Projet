@@ -5,6 +5,8 @@ pipeline {
         SONARQUBE_ENV = 'SonarQube'
         SONAR_TOKEN = credentials('SonartDevops')
         DOCKER_CREDENTIALS_ID = 'DOCKER'
+       /*  KUBECONFIG_CREDENTIALS_ID = 'kubeconfig-springboot'
+        K8S_NAMESPACE = "springboot-demo" */
     }
 
     stages {
@@ -90,7 +92,7 @@ pipeline {
                     }
                 }
 
-        stage('Docker Compose Up') {
+       stage('Docker Compose Up') {
             steps {
                 script {
                     echo 'Starting services with Docker Compose...'
@@ -98,6 +100,21 @@ pipeline {
                 }
             }
         }
+
+          /*       stage('Deploy to Kubernetes') {
+                    steps {
+                        script {
+
+                             kubeconfig(credentialsId: 'kubeconfig') {
+
+                                sh 'kubectl apply -f k8s/deployment.yaml -n ${env.K8S_NAMESPACE}'
+                                sh 'kubectl apply -f k8s/service.yaml -n ${env.K8S_NAMESPACE}'
+                            }
+
+
+                        }
+                    }
+                } */
     }
 
  post {
